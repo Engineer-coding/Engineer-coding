@@ -40,13 +40,18 @@
             background-color: #1ED760;
         }
         #lyrics {
-            white-space: pre-line;
             margin-top: 30px;
-            text-align: left;
-            line-height: 1.6;
+            text-align: center;
+            line-height: 1.8;
             padding: 20px;
-            background: #fafafa;
-            border-radius: 5px;
+        }
+        .lyrics-line {
+            margin: 8px 0;
+            animation: fadeIn 0.5s ease-in-out;
+            animation-fill-mode: both;
+        }
+        .stanza {
+            margin-bottom: 30px;
         }
         .loading {
             color: #666;
@@ -54,6 +59,10 @@
         }
         .error {
             color: #e74c3c;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -91,7 +100,7 @@
                 const data = await response.json();
                 
                 if (data.lyrics) {
-                    lyricsDiv.textContent = data.lyrics;
+                    displayFormattedLyrics(data.lyrics);
                 } else {
                     lyricsDiv.innerHTML = '<p class="error">No lyrics found for this combination</p>';
                 }
@@ -99,8 +108,36 @@
                 lyricsDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
             }
         }
+
+        function displayFormattedLyrics(rawLyrics) {
+            const lyricsDiv = document.getElementById('lyrics');
+            lyricsDiv.innerHTML = '';
+            
+            // Split into stanzas (groups of lines separated by empty lines)
+            const stanzas = rawLyrics.split(/\n\s*\n/);
+            
+            stanzas.forEach((stanza, stanzaIndex) => {
+                const stanzaDiv = document.createElement('div');
+                stanzaDiv.className = 'stanza';
+                
+                // Split stanza into individual lines
+                const lines = stanza.split('\n').filter(line => line.trim() !== '');
+                
+                lines.forEach((line, lineIndex) => {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'lyrics-line';
+                    lineDiv.textContent = line.trim();
+                    
+                    // Add animation delay for sequential appearance
+                    lineDiv.style.animationDelay = `${(stanzaIndex * 0.3) + (lineIndex * 0.1)}s`;
+                    
+                    stanzaDiv.appendChild(lineDiv);
+                });
+                
+                lyricsDiv.appendChild(stanzaDiv);
+            });
+        }
         
-        // Add keyboard support
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 getLyrics();
