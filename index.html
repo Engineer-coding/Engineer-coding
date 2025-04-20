@@ -24,10 +24,10 @@
     </style>
 </head>
 <body>
-    <h1>Şarkı Sözü Bulucu</h1>
-    <input type="text" id="artist" placeholder="Sanatçı Adı">
-    <input type="text" id="song" placeholder="Şarkı Adı">
-    <button onclick="getLyrics()">Sözleri Getir</button>
+    <h1>Lyrics Finder</h1>
+    <input type="text" id="artist" placeholder="Singer Name">
+    <input type="text" id="song" placeholder="Song Name">
+    <button onclick="getLyrics()">Show Lyrics</button>
     <div id="lyrics"></div>
 
     <script>
@@ -41,7 +41,7 @@
                 return;
             }
 
-            lyricsDiv.textContent = "Yükleniyor...";
+            lyricsDiv.textContent = "Loading";
             
             try {
                 const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(song)}`);
@@ -50,10 +50,10 @@
                 if (data.lyrics) {
                     lyricsDiv.textContent = data.lyrics;
                 } else {
-                    lyricsDiv.textContent = "Şarkı sözleri bulunamadı";
+                    lyricsDiv.textContent = "Lyrics not found";
                 }
             } catch (error) {
-                lyricsDiv.textContent = "Bir hata oluştu: " + error.message;
+                lyricsDiv.textContent = "Error occured: " + error.message;
             }
         }
     </script>
