@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şarkı Sözü Bulucu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        #lyrics {
+            white-space: pre-line;
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Şarkı Sözü Bulucu</h1>
+    <input type="text" id="artist" placeholder="Sanatçı Adı">
+    <input type="text" id="song" placeholder="Şarkı Adı">
+    <button onclick="getLyrics()">Sözleri Getir</button>
+    <div id="lyrics"></div>
+
+    <script>
+        async function getLyrics() {
+            const artist = document.getElementById('artist').value;
+            const song = document.getElementById('song').value;
+            const lyricsDiv = document.getElementById('lyrics');
+            
+            if (!artist || !song) {
+                lyricsDiv.textContent = "Lütfen sanatçı ve şarkı adı giriniz";
+                return;
+            }
+
+            lyricsDiv.textContent = "Yükleniyor...";
+            
+            try {
+                const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(song)}`);
+                const data = await response.json();
+                
+                if (data.lyrics) {
+                    lyricsDiv.textContent = data.lyrics;
+                } else {
+                    lyricsDiv.textContent = "Şarkı sözleri bulunamadı";
+                }
+            } catch (error) {
+                lyricsDiv.textContent = "Bir hata oluştu: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
